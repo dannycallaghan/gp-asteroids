@@ -44,30 +44,101 @@ function drawEarth(){
   ellipse(earthLoc.x, earthLoc.y, earthSize.x, earthSize.y);
 }
 
+/*
+TODO
+Step 5: In sketch.js complete the checkCollisions() function so 
+that you check collisions between the spaceship and all asteroids. 
+Hint: You'll need to loop over all the asteroids and use the inInside() 
+function you just programmed. If it returns true then you'll call the 
+gameOver() function. If you've done things right, if the spaceship is 
+hit by an asteroid the game will end. Check before proceeding.
+*/
+
+/*
+TODO
+Step 6: In sketch.js add more functionality to the checkCollisions() 
+function to check if an asteroid has crashed onto earth. If you do 
+things right then the game should end when that happens. Check before proceeding.
+*/
+
+/*
+TODO
+Step 7: In sketch.js add more functionality to the checkCollisions() 
+function to check if the spaceship has collided with the earth and if it 
+has it ends the game. Check before proceeding.
+*/
+
+/*
+TODO
+Step 8: In sketch.js add more functionality to the checkCollisions() 
+function to check if the spaceship is inside the atmosphere. If it is, the 
+spaceship's setNearEarth() function is called.
+*/
+
+/*
+TODO
+Step 10: In sketch.js add more functionality to the checkCollisions() 
+function to check if any of the bullets of the spaceship have hit any asteroids. 
+If they have, then call the destroy() function of the asteroid object, 
+passing it the index of the asteroid to destroy.
+*/
+
 //////////////////////////////////////////////////
 //checks collisions between all types of bodies
 function checkCollisions(spaceship, asteroids){
+  const asteroidsLength = asteroids.locations.length;
+  const bulletsLength = spaceship.bulletSys.bullets.length;
+    
+  //spaceship-2-asteroid collisions
+  for (let i = 0; i < asteroidsLength; i++) {
+    if (isInside(asteroids.locations[i], asteroids.diams[i], spaceship.location, spaceship.size)) {
+      gameOver();
+    }
+  }
 
-    //spaceship-2-asteroid collisions
-    //YOUR CODE HERE (2-3 lines approx)
+  //asteroid-2-earth collisions
+  for (let i = 0; i < asteroidsLength; i++) {
+    if (isInside(asteroids.locations[i], asteroids.diams[i], earthLoc, earthSize)) {
+      gameOver();
+    }
+  }
 
-    //asteroid-2-earth collisions
-    //YOUR CODE HERE (2-3 lines approx)
+  //spaceship-2-earth
+  if (isInside(earthLoc, earthSize, spaceship.location, spaceship.size)) {
+    gameOver();
+  }
 
-    //spaceship-2-earth
-    //YOUR CODE HERE (1-2 lines approx)
+  //spaceship-2-atmosphere
+  if (isInside(atmosphereLoc, atmosphereSize, spaceship.location, spaceship.size)) {
+    spaceship.setNearEarth();
+  }
 
-    //spaceship-2-atmosphere
-    //YOUR CODE HERE (1-2 lines approx)
-
-    //bullet collisions
-    //YOUR CODE HERE (3-4 lines approx)
+  //bullet collisions
+  for (let i = 0; i < bulletsLength; i++) {
+    for (let j = 0; j < asteroidsLength; j++) {
+      if (isInside(spaceship.bulletSys.bullets[i], spaceship.bulletSys.diam, asteroids.locations[j], asteroids.diams[j])) {
+        asteroids.destroy(j);
+        spaceship.bulletSys.bullets.splice(i, 1);
+        break;
+      }
+    }
+  }
 }
+
+/*
+TODO
+Step 4: In sketch.js complete the isInside() function that takes the 
+location of two circles and their diameters and returns true if they 
+overlap, false otherwise. You could check it works, by creating a 
+dummy circle around the mouse and checking if isInside() returns true.
+*/
 
 //////////////////////////////////////////////////
 //helper function checking if there's collision between object A and object B
 function isInside(locA, sizeA, locB, sizeB){
-    // YOUR CODE HERE (3-5 lines approx)
+  const _sizeA = typeof sizeA === 'object' ? sizeA.x : sizeA;
+  const _sizeB = typeof sizeB === 'object' ? sizeB.x : sizeB;
+  return dist(locA.x, locA.y, locB.x, locB.y) < _sizeA / 2 + _sizeB / 2;
 }
 
 //////////////////////////////////////////////////
