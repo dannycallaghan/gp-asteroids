@@ -86,8 +86,6 @@ passing it the index of the asteroid to destroy.
 //////////////////////////////////////////////////
 //checks collisions between all types of bodies
 function checkCollisions(spaceship, asteroids){
-  return;
-  
   const asteroidsLength = asteroids.locations.length;
   const bulletsLength = spaceship.bulletSys.bullets.length;
     
@@ -118,7 +116,7 @@ function checkCollisions(spaceship, asteroids){
   //bullet collisions
   for (let i = 0; i < bulletsLength; i++) {
     for (let j = 0; j < asteroidsLength; j++) {
-      if (isInside(spaceship.bulletSys.bullets[i], spaceship.bulletSys.diam, asteroids.locations[j], asteroids.diams[j])) {
+      if (isInside(spaceship.bulletSys.bullets[i].position, spaceship.bulletSys.diam, asteroids.locations[j], asteroids.diams[j])) {
         asteroids.destroy(j);
         spaceship.bulletSys.bullets.splice(i, 1);
         break;
