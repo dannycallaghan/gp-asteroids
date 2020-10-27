@@ -7,6 +7,13 @@ class Spaceship {
     this.maxVelocity = 5;
     this.bulletSys = new BulletSystem();
     this.size = 50;
+
+    //this.thrustUp = false;
+    //this.thrustDown = false;
+
+    this.rotate = 0;
+    this.currentPosition = 0;
+
   }
 
   run(){
@@ -18,11 +25,297 @@ class Spaceship {
   }
 
   draw(){
-    fill(125);
-    triangle(this.location.x - this.size/2, this.location.y + this.size/2,
-        this.location.x + this.size/2, this.location.y + this.size/2,
-        this.location.x, this.location.y - this.size/2);
+    push();
+    translate(this.location.x, this.location.y);
+
+    this.currentPosition = this.currentPosition + this.rotate;
+    rotate(radians(this.currentPosition)); 
+
+    var shipTop = 0 - this.size / 2;
+    var shipRight = shipTop + this.size;
+    var shipBottom = shipTop + this.size;
+    var shipLeft = shipTop;
+    
+    fill(180); // Legs colour
+    
+    rect(shipLeft, shipBottom - 4, 10, 4); // Left foot
+    rect(shipRight - 10, shipRight - 4, 10, 4); // Right 
+    
+    // Left leg
+    beginShape();
+    vertex(shipLeft + 10, 4);
+    vertex(shipLeft + 15, 4);
+    vertex(shipLeft + 5, shipBottom);
+    vertex(shipLeft, shipBottom);
+    endShape();
+    
+    // Left support
+    beginShape();
+    vertex(shipLeft + 20, 4);
+    vertex(shipLeft + 23, 4);
+    vertex(shipLeft + 8, shipBottom - 8);
+    vertex(shipLeft + 5, shipBottom - 8);
+    endShape();
+    
+    // Right leg
+    beginShape();
+    vertex(shipRight - 15, 4);
+    vertex(shipRight - 10, 4);
+    vertex(shipRight, shipBottom);
+    vertex(shipRight - 5, shipBottom);
+    endShape();
+    
+    // Right support
+    beginShape();
+    vertex(shipRight - 23, 4);
+    vertex(shipRight - 20, 4);
+    vertex(shipRight - 5, shipBottom - 8);
+    vertex(shipRight - 8, shipBottom - 8);
+    endShape();
+    
+    // Legs base
+    fill(210, 105, 30); // leg base colour
+    rect(shipLeft + 10, 0, 30, 4);
+    
+    // Dome
+    fill(212,175,55); // dome colour
+    arc(  0, 0,
+          this.size - 5, this.size - 5,
+          PI + radians(0),
+          TWO_PI + radians(0),
+          OPEN);
+    
+    // Left booster
+    push();
+    translate(-25.5, -2)
+    rotate(radians(280));
+    rect(0, 0, 8, 4);
+    pop();
+    
+    // Right booster
+    push();
+    translate(24, -10)
+    rotate(radians(78));
+    rect(0, 0, 8, 4)
+    pop();
+    
+    // Top left booster
+    rect(0 - 14, shipTop + 2, 8, 6)
+    
+    // Top right booster
+    rect(0 + 6, shipTop + 2, 8, 6)
+    
+    // Rockets
+    rect(0 - 2, shipTop, 4, 4)
+    
+    // Union flag
+    fill(0, 0, 255); // Blue
+    push();
+    translate(0 - 12, 0 - 16);
+    rect(0, 0, 24, 14); // Flag background
+    
+    fill(255); // White
+    rect(10, 0, 4, 14); // Vertical white line
+    rect(0, 5, 24, 4) // Horizontal white line
+    
+    // Top left to bottom right white line
+    beginShape();
+    vertex(0, 0);
+    vertex(2, 0);
+    vertex(24, 12);
+    vertex(24, 14);
+    vertex(22, 14);
+    vertex(0, 2);
+    endShape();
+    
+    // Top right to bottom left white line
+    beginShape();
+    vertex(24, 0);
+    vertex(22, 0);
+    vertex(0, 12);
+    vertex(0, 14);
+    vertex(2, 14);
+    vertex(24, 2);
+    endShape();
+    
+    fill(255, 0, 0); // Red
+    rect(11, 0, 2, 14); // Vertical red line
+    rect(0, 6, 24, 2); // Horizontal red line
+    
+    // Top left to bottom right red line
+    beginShape();
+    vertex(0, 0);
+    vertex(1, 0);
+    vertex(24, 13);
+    vertex(24, 14);
+    vertex(23, 14);
+    vertex(0, 1);
+    endShape();
+    
+    // Top right to bottom left red line
+    beginShape();
+    vertex(24, 0);
+    vertex(23, 0);
+    vertex(0, 13);
+    vertex(0, 14);
+    vertex(1, 14);
+    vertex(24, 1);
+    endShape();
+    pop();
+    
+    // Flames
+    // Red flame
+    const redFlame = [
+      createVector(0, 0),
+      createVector(4, 30),
+      createVector(4, 30),
+      createVector(8, 0)
+    ];
+    // Yellow flame
+    const yellowFlame = [
+      createVector(2, 0),
+      createVector(4, 26),
+      createVector(4, 26),
+      createVector(6, 0)
+    ];
+
+    // Bottom left flame
+    push();
+    translate(shipLeft + 1, this.size / 2)
+    if (this.thrustUp) showFlame();
+    pop();
+    
+    // Bottom right flame
+    push();
+    translate(shipRight - 9, this.size / 2)
+    if (this.thrustUp) showFlame();
+    pop();
+    
+    // Top right flame
+    push();
+    rotate(radians(180));
+    translate(0 - 14, (this.size / 2) -2)
+    if (this.thrustDown) showFlame();
+    pop();
+    
+    // Top left flame
+    push();
+    rotate(radians(180));
+    translate(0 + 6, (this.size / 2) -2)
+    if (this.thrustDown) showFlame();
+    pop();
+    
+    // Left flame
+    push();
+    translate(-24, -10)
+    rotate(radians(101));
+    if (this.thrustRight) showFlame();
+    pop();
+    
+    // Right flame
+    push();
+    translate(25.5, -2)
+    rotate(radians(257));
+    if (this.thrustLeft) showFlame();
+    pop();
+
+    pop();
+    
+    function showFlame() {
+      // Red flame
+      fill(255, 0, 0);
+      bezier(redFlame[0].x, redFlame[0].y,
+            redFlame[1].x, redFlame[1].y,
+            redFlame[2].x, redFlame[2].y,
+            redFlame[3].x, redFlame[3].y);
+      // Yellow flame
+      if (frameCount % 5 === 0) {
+        fill(255, 255, 0);
+        bezier(yellowFlame[0].x, yellowFlame[0].y,
+              yellowFlame[1].x, yellowFlame[1].y,
+              yellowFlame[2].x, yellowFlame[2].y,
+              yellowFlame[3].x, yellowFlame[3].y);
+      }
+    }
   }
+
+  // draw(){
+
+  //   ///fill(50);
+  //   //rect(this.location.x - this.size / 2, this.location.y - this.size / 2, this.size, this.size);
+
+  //   //fill(255, 0, 0)
+  //   //arc(this.location.x, this.location.y, this.size, this.size, PI + radians(this.currentPosition), TWO_PI + radians(this.currentPosition), OPEN);
+
+
+  //   const leftEdge = (this.location.x - this.size / 2) + 2;
+  //   const rightEdge = (leftEdge + this.size) - 4;
+
+  //   fill(255, 0, 0);
+  //   //rect(this.location.x - this.size / 2, this.location.y, this.size, 4);
+
+  //   //rect(leftEdge + 3, this.location.y, 10, 10);
+
+  
+  //   //fill(200);
+
+  //   //rect(leftEdge + 4, this.location.y - 4, this.size - 8, 4);
+
+    
+
+  //   //rect(leftEdge + 4, this.location.y, this.size - 8, 6);
+
+  //   fill(100)
+  //   rect(leftEdge + 4, this.location.y - 1, this.size - 8, 2);
+    
+  //   stroke(100);
+
+  //   // Left main leg
+  //   line(leftEdge + 4, this.location.y, leftEdge + 2, this.location.y + 20);
+  //   line(leftEdge + 3, this.location.y, leftEdge + 1, this.location.y + 20);
+  //   line(leftEdge + 2, this.location.y, leftEdge, this.location.y + 20);
+
+  //   // Left support leg
+  //   line(leftEdge + 15, this.location.y, leftEdge, this.location.y + 20);
+  //   line(leftEdge + 14, this.location.y, leftEdge, this.location.y + 20);
+
+  //   // Left base
+  //   rect(leftEdge - 2, this.location.y + 20, 7, 2);
+
+  //   // Right main leg
+  //   line(rightEdge - 4, this.location.y, rightEdge - 2, this.location.y + 20);
+  //   line(rightEdge - 3, this.location.y, rightEdge - 1, this.location.y + 20);
+  //   line(rightEdge - 2, this.location.y, rightEdge, this.location.y + 20);
+
+  //   // Right support leg
+  //   line(rightEdge - 15, this.location.y, rightEdge, this.location.y + 20);
+  //   line(rightEdge - 14, this.location.y, rightEdge, this.location.y + 20);
+
+  //   // Right base
+  //   rect((rightEdge - 5), this.location.y + 20, 7, 2);
+
+
+
+
+
+  //   //return;
+
+  //   // push();
+  //   // fill(125);
+  //   // translate(this.location.x, this.location.y);
+  //   // this.currentPosition = this.currentPosition + this.rotate ;
+  //   // rotate(radians(this.currentPosition)); 
+  //   // triangle(
+  //   //   0 - this.size/2, 0 + this.size/2,
+  //   //   0 + this.size/2, 0 + this.size/2,
+  //   //   0, 0 - this.size/2
+  //   // );
+  //   // pop();
+
+  //   noStroke();
+  //   fill(255, 0, 0);
+  //   ellipse(this.location.x, this.location.y, 1, 1);
+  // }
 
   /*
   TODO
@@ -33,14 +326,23 @@ class Spaceship {
   the spaceship will keep moving. There is no friction in empty space.
   */
   move(){
+    // push();
+    // translate(this.location.x, this.location.y);
+    // this.currentPosition = this.currentPosition + this.rotate ;
+    // rotate(radians(this.currentPosition)); 
     this.velocity.add(this.acceleration);
     this.velocity.limit(this.maxVelocity);
     this.location.add(this.velocity);
     this.acceleration.mult(0);
+    //pop();
   }
 
   applyForce(f){
     this.acceleration.add(f);
+  }
+
+  doRotate(amount) {
+    this.rotate = amount;
   }
 
   /*
@@ -54,16 +356,38 @@ class Spaceship {
 
   interaction(){
       if (keyIsDown(LEFT_ARROW)){
+        this.thrustLeft = true;
+        this.doRotate(-1);
         this.applyForce(createVector(-0.1, 0));
       }
       if (keyIsDown(RIGHT_ARROW)){
+        this.thrustRight = true;
+        this.doRotate(1);
         this.applyForce(createVector(0.1, 0));
       }
       if (keyIsDown(UP_ARROW)){
+        this.thrustUp = true;
         this.applyForce(createVector(0, -0.1));
       }
       if (keyIsDown(DOWN_ARROW)){
+        this.thrustDown = true;
         this.applyForce(createVector(0, 0.1));
+      }
+
+      if (!keyIsDown(LEFT_ARROW) && !keyIsDown(RIGHT_ARROW)) {
+        this.doRotate(0);
+      }
+      if (!keyIsDown(LEFT_ARROW)){
+        this.thrustLeft = false;
+      }
+      if (!keyIsDown(RIGHT_ARROW)){
+        this.thrustRight = false;
+      }
+      if (!keyIsDown(UP_ARROW)){
+        this.thrustUp = false;
+      }
+      if (!keyIsDown(DOWN_ARROW)){
+        this.thrustDown = false;
       }
   }
 
@@ -145,3 +469,132 @@ class Spaceship {
 
   }
 }
+
+
+/*
+var shipTop = 0 - size / 2;
+  var shipRight = shipTop + size;
+  var shipBottom = shipTop + size;
+  var shipLeft = shipTop;
+  
+  fill(180); // Legs colour
+  
+  rect(shipLeft, shipBottom - 4, 10, 4); // Left foot
+  rect(shipRight - 10, shipRight - 4, 10, 4); // Right 
+  
+  // Left leg
+  beginShape();
+  vertex(shipLeft + 10, 4);
+  vertex(shipLeft + 15, 4);
+  vertex(shipLeft + 5, shipBottom);
+  vertex(shipLeft, shipBottom);
+  endShape();
+  
+  // Left support
+  beginShape();
+  vertex(shipLeft + 20, 4);
+  vertex(shipLeft + 23, 4);
+  vertex(shipLeft + 8, shipBottom - 8);
+  vertex(shipLeft + 5, shipBottom - 8);
+  endShape();
+  
+  // Right leg
+  beginShape();
+  vertex(shipRight - 15, 4);
+  vertex(shipRight - 10, 4);
+  vertex(shipRight, shipBottom);
+  vertex(shipRight - 5, shipBottom);
+  endShape();
+  
+  // Right support
+  beginShape();
+  vertex(shipRight - 23, 4);
+  vertex(shipRight - 20, 4);
+  vertex(shipRight - 5, shipBottom - 8);
+  vertex(shipRight - 8, shipBottom - 8);
+  endShape();
+  
+  // Legs base
+  fill(210, 105, 30); // leg base colour
+  rect(shipLeft + 10, 0, 30, 4);
+  
+  // Dome
+  fill(212,175,55); // dome colour
+  arc(  0, 0,
+        size - 5, size - 5,
+        PI + radians(0),
+        TWO_PI + radians(0),
+        OPEN);
+  
+  // Left booster
+  push();
+  translate(-24.5, -6)
+  rotate(radians(296));
+  rect(0, 0, 8, 3); // 3
+  pop();
+  
+  // Right booster
+  push();
+  translate(21, -13)
+  rotate(radians(64));
+  rect(0, 0, 8, 3)
+  pop();
+  
+  // Top booster
+  rect(0 - 4, shipTop, 8, 3)
+  
+  // Union flag
+  fill(0, 0, 255); // Blue
+  push();
+  translate(0 - 12, 0 - 16);
+  rect(0, 0, 24, 14); // Flag background
+  
+  fill(255); // White
+  rect(10, 0, 4, 14); // Vertical white line
+  rect(0, 5, 24, 4) // Horizontal white line
+  
+  // Top left to bottom right white line
+  beginShape();
+  vertex(0, 0);
+  vertex(2, 0);
+  vertex(24, 12);
+  vertex(24, 14);
+  vertex(22, 14);
+  vertex(0, 2);
+  endShape();
+  
+  // Top right to bottom left white line
+  beginShape();
+  vertex(24, 0);
+  vertex(22, 0);
+  vertex(0, 12);
+  vertex(0, 14);
+  vertex(2, 14);
+  vertex(24, 2);
+  endShape();
+  
+  fill(255, 0, 0); // Red
+  rect(11, 0, 2, 14); // Vertical red line
+  rect(0, 6, 24, 2); // Horizontal red line
+  
+  // Top left to bottom right red line
+  beginShape();
+  vertex(0, 0);
+  vertex(1, 0);
+  vertex(24, 13);
+  vertex(24, 14);
+  vertex(23, 14);
+  vertex(0, 1);
+  endShape();
+  
+  // Top right to bottom left red line
+  beginShape();
+  vertex(24, 0);
+  vertex(23, 0);
+  vertex(0, 13);
+  vertex(0, 14);
+  vertex(1, 14);
+  vertex(24, 1);
+  endShape();
+  pop();
+  */

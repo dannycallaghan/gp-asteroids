@@ -86,6 +86,8 @@ passing it the index of the asteroid to destroy.
 //////////////////////////////////////////////////
 //checks collisions between all types of bodies
 function checkCollisions(spaceship, asteroids){
+  return;
+  
   const asteroidsLength = asteroids.locations.length;
   const bulletsLength = spaceship.bulletSys.bullets.length;
     
