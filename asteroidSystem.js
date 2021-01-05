@@ -6,6 +6,7 @@ class AsteroidSystem {
     this.velocities = [];
     this.accelerations = [];
     this.diams = [];
+    this.explosions = [];
   }
 
   run(){
@@ -43,9 +44,27 @@ class AsteroidSystem {
   draw(){
     noStroke();
     fill(200);
-    for (var i=0; i<this.locations.length; i++){
+    const locationsLength = this.locations.length;
+    const explosions = this.explosions;
+    const explosionsLength = explosions.length;
+
+    for (var i = 0; i < locationsLength; i++) {
       ellipse(this.locations[i].x, this.locations[i].y, this.diams[i], this.diams[i]);
     }
+
+    for (var i = 0; i < explosionsLength; i++) {
+      push();
+      const size = explosions[i].size + 2;
+      if (size <= explosions[i].limit) {
+        fill(255, 0, 0);
+        ellipse(explosions[i].x, explosions[i].y, size, size);
+        explosions[i].size= size;
+      } else {
+        this.explosions.splice(i, 1);
+      }
+      pop();
+    }
+
   }
 
   //function that calculates effect of gravity on each asteroid and accelerates it
@@ -60,9 +79,17 @@ class AsteroidSystem {
 
   //destroys all data associated with each asteroid
   destroy(index){
-    this.locations.splice(index,1);
-    this.velocities.splice(index,1);
-    this.accelerations.splice(index,1);
-    this.diams.splice(index,1);
+
+    this.explosions = this.explosions.concat([{
+      x: this.locations[index].x,
+      y: this.locations[index].y,
+      limit: this.diams[index],
+      size: 1
+    }])
+
+    this.locations.splice(index, 1);
+    this.velocities.splice(index, 1);
+    this.accelerations.splice(index, 1);
+    this.diams.splice(index, 1);
   }
 }

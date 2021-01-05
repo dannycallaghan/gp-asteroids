@@ -4,16 +4,11 @@ class Spaceship {
     this.velocity = new createVector(0, 0);
     this.location = new createVector(width/2, height/2);
     this.acceleration = new createVector(0, 0);
-    this.maxVelocity = 5;
+    this.maxVelocity = 3;
     this.bulletSys = new BulletSystem();
     this.size = 50;
-
-    //this.thrustUp = false;
-    //this.thrustDown = false;
-
     this.rotate = 0;
-    this.currentRotation = 45;
-
+    this.currentRotation = 0;
   }
 
   run(){
@@ -274,11 +269,11 @@ class Spaceship {
   interaction(){
       if (keyIsDown(LEFT_ARROW)){
         this.thrustLeft = true;
-        this.doRotate(-1);
+        this.doRotate(-2);
       }
       if (keyIsDown(RIGHT_ARROW)){
         this.thrustRight = true;
-        this.doRotate(1);
+        this.doRotate(2);
       }
       if (keyIsDown(UP_ARROW)){
         this.thrustUp = true;

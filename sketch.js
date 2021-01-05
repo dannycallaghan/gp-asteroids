@@ -5,6 +5,18 @@ var atmosphereSize;
 var earthLoc;
 var earthSize;
 var starLocs = [];
+var speed;
+
+var planetImg;
+
+/**
+ * P5 preload functionality
+ *
+ * @return void.
+ */
+function preload () {
+  planetImg = loadImage('./images/planet.png');
+}
 
 //////////////////////////////////////////////////
 function setup() {
@@ -23,6 +35,11 @@ function setup() {
 function draw() {
   background(0);
   sky();
+  speed = frameCount;
+
+  //translate(width / 2, 0);
+
+  //scale(0.15);
 
   spaceship.run();
   asteroids.run();
@@ -35,13 +52,30 @@ function draw() {
 //////////////////////////////////////////////////
 //draws earth and atmosphere
 function drawEarth(){
+
+  
+
   noStroke();
   //draw atmosphere
   fill(0,0,255, 50);
   ellipse(atmosphereLoc.x, atmosphereLoc.y, atmosphereSize.x,  atmosphereSize.y);
+
+  push();
+  translate(earthLoc.x, earthLoc.y);
+  rotate(radians(speed / 8));
+
   //draw earth
-  fill(100,255);
-  ellipse(earthLoc.x, earthLoc.y, earthSize.x, earthSize.y);
+  fill(0, 105, 148);
+  ellipse(0, 0, earthSize.x, earthSize.y);
+
+  //planetImg = loadImage('./images/planet.png');
+  imageMode(CENTER);
+  image(planetImg, 0, 0, earthSize.x, earthSize.y);
+
+  //fill(255, 0, 0);
+  //ellipse((0 - earthSize.x / 2), (0 - earthSize.x / 2), 100, 100);
+
+  pop();
 }
 
 /*
@@ -116,10 +150,12 @@ function checkCollisions(spaceship, asteroids){
   //bullet collisions
   for (let i = 0; i < bulletsLength; i++) {
     for (let j = 0; j < asteroidsLength; j++) {
-      if (isInside(spaceship.bulletSys.bullets[i].position, spaceship.bulletSys.diam, asteroids.locations[j], asteroids.diams[j])) {
-        asteroids.destroy(j);
-        spaceship.bulletSys.bullets.splice(i, 1);
-        break;
+      if (spaceship.bulletSys.bullets[i]) {
+        if (isInside(spaceship.bulletSys.bullets[i].position, spaceship.bulletSys.diam, asteroids.locations[j], asteroids.diams[j])) {
+          asteroids.destroy(j);
+          spaceship.bulletSys.bullets.splice(i, 1);
+          break;
+        }
       }
     }
   }
